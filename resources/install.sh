@@ -10,3 +10,8 @@ fi
 /opt/bin/kubectl apply -f /var/lib/gravity/resources/grafana-cfg.yaml
 /opt/bin/kubectl apply -f /var/lib/gravity/resources/resources.yaml
 /opt/bin/kubectl apply -f /var/lib/gravity/resources/alerts.yaml
+
+if [ $(/opt/bin/kubectl get nodes -l gravitational.io/k8s-role=master -o name | wc -l) -ge 3 ]
+then
+    /opt/bin/kubectl --namespace=kube-system scale --replicas=3 deployment kube-state-metrics.yaml
+fi

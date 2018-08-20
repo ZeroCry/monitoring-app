@@ -1,11 +1,12 @@
 .PHONY: all heapster heapster-build heapster-clean influxdb influxdb-build \
-	influxdb-clean grafana kapacitor telegraf deploy
+	influxdb-clean grafana kapacitor telegraf deploy kube-state-metrics
 
 GRAFANA_VERSION := 5.1.0
 HEAPSTER_VERSION := 1.4.1
 INFLUXDB_VERSION := 1.2.2
 KAPACITOR_VERSION := 1.2.1
 TELEGRAF_VERSION := 1.4.0
+KUBE_STATE_METRICS_VERSION := 1.3.1
 
 PWD=$(shell pwd)
 .DEFAULT_GOAL := all
@@ -16,6 +17,7 @@ GRAFANA_TAG   := monitoring-grafana:$(VERSION)
 KAPACITOR_TAG := monitoring-kapacitor:$(VERSION)
 TELEGRAF_TAG  := monitoring-telegraf:$(VERSION)
 HOOK_TAG := monitoring-hook:$(VERSION)
+KUBE_STATE_METRICS_TAG := monitoring-kube-state-metrics:$(VERSION)
 
 REPO_URL := quay.io/gravitational
 
@@ -54,7 +56,10 @@ kapacitor:
 telegraf:
 	$(MAKE) -e BUILDIMAGE=$(TELEGRAF_TAG) EXTRA_ARGS="--build-arg TELEGRAF_VERSION=$(TELEGRAF_VERSION)" TARGETDIR=$@ make-docker-image
 
-all: heapster influxdb grafana kapacitor telegraf hook
+kube-state-metrics:
+	$(MAKE) -e BUILDIMAGE=$(KUBE_STATE_METRICS_TAG) EXTRA_ARGS="--build-arg KUBE_STATE_METRICS_VERSION=$(KUBE_STATE_METRICS_VERSION)" TARGETDIR=$@ make-docker-image
+
+all: heapster influxdb grafana kapacitor telegraf hook kube-state-metrics
 
 clean: heapster-clean influxdb-clean
 
